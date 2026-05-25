@@ -14,9 +14,9 @@
       when: ansible_memtotal_mb <= min_memory_mb
 
     - name: Get system uptime
-      ansible.builtin.command: uptime -p
-      register: uptime_result
-      changed_when: false
+      ansible.builtin.set_fact:
+        uptime_result:
+          stdout: "{{ (ansible_uptime_seconds / 3600) | int }}h {{ ((ansible_uptime_seconds % 3600) / 60) | int }}m"
 
     - name: Get disk usage on root filesystem
       ansible.builtin.shell: df -h / | awk 'NR==2 {print $3 " used of " $2 " (" $5 " full)"}'
