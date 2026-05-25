@@ -1,0 +1,50 @@
+---
+- name: System Information Report
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    min_memory_mb: 512
+
+  tasks:
+    - name: Check memory meets minimum requirement
+      ansible.builtin.fail:
+        msg: "Insufficient memory: {{ ansible_memtotal_mb }}MB available, {{ min_memory_mb }}MB required"
+      when: ansible_memtotal_mb =< min_memory_mb
+
+    - name: Get system uptime
+      ansible.builtin.command: uptime -p
+      register: uptime_result
+      changed_when: false
+
+    - name: Get disk usage on root filesystem
+      ansible.builtin.shell: df -h / | awk 'NR==2 {print $3 " used of " $2 " (" $5 " full)"}'
+      register: disk_result
+      changed_when: false
+
+    - name: Read OS release details
+      ansible.builtin.slurp:
+        src: /etc/os-relese
+      register: os_release_raw
+
+    - name: Extract OS version ID
+      ansible.builtin.set_fact:
+        os_version_id: >-
+          {{ os_release_raw.content | b64decode
+             | regex_search('VERSION_ID="([^"]+)"', '\1') | first }}
+
+    - name: Display system report
+      ansible.builtin.debug:
+        msg:
+          - "============================="
+          - "     SYSTEM REPORT"
+          - "============================="
+          - "Hostname : {{ ansible_hostname }}"
+          - "OS       : {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Version  : {{ os_version_id }}"
+          - "Kernel   : {{ ansible_kernel }}"
+          - "Uptime   : {{ uptime_result.stdout }}"
+          - "Memory   : {{ ansible_memtotal_mb }} MB total"
+          - "Disk /   : {{ disk_result.stdout }}"
+          - "============================="

@@ -1,0 +1,11 @@
+{
+  "enabledMcpjsonServers": [
+    "aap",
+    "aap-mcp-job-mgmt",
+    "aap-mcp-inventory-mgmt",
+    "aap-mcp-system-monitor",
+    "aap-mcp-user-mgmt",
+    "aap-mcp-security",
+    "aap-mcp-platform-config"
+  ]
+}
