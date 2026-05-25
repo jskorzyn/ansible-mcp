@@ -11,7 +11,7 @@
     - name: Check memory meets minimum requirement
       ansible.builtin.fail:
         msg: "Insufficient memory: {{ ansible_memtotal_mb }}MB available, {{ min_memory_mb }}MB required"
-      when: ansible_memtotal_mb =< min_memory_mb
+      when: ansible_memtotal_mb <= min_memory_mb
 
     - name: Get system uptime
       ansible.builtin.command: uptime -p
