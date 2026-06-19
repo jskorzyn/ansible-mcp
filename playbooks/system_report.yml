@@ -14,9 +14,8 @@
       when: ansible_memtotal_mb <= min_memory_mb
 
     - name: Get CPU utilization
-      ansible.builtin.command: iostat -c 1 1
-      register: cpu_stat
-      changed_when: false
+      ansible.builtin.set_fact:
+        cpu_stat: "{{ ansible_processor_vcpus }} vCPUs ({{ ansible_processor_count }} socket(s))"
 
     - name: Get disk usage on root filesystem
       ansible.builtin.shell: set -o pipefail && df -h / | awk 'NR==2 {print $3 " used of " $2 " (" $5 " full)"}'
@@ -44,7 +43,7 @@
           - "OS       : {{ ansible_distribution }} {{ ansible_distribution_version }}"
           - "Version  : {{ os_version_id }}"
           - "Kernel   : {{ ansible_kernel }}"
-          - "CPU      : {{ cpu_stat.stdout_lines[-1] }}"
+          - "CPU      : {{ cpu_stat }}"
           - "Memory   : {{ ansible_memtotal_mb }} MB total"
           - "Disk /   : {{ disk_result.stdout }}"
           - "============================="
