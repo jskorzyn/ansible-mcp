@@ -14,7 +14,7 @@
       when: ansible_memtotal_mb <= min_memory_mb
 
     - name: Get CPU utilization
-      ansible.builtin.command: iostat -c 1 1
+      ansible.builtin.command: cat /proc/loadavg
       register: cpu_stat
       changed_when: false
 
