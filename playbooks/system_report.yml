@@ -25,7 +25,7 @@
 
     - name: Read OS release details
       ansible.builtin.slurp:
-        src: /etc/os-relese
+        src: /etc/os-release
       register: os_release_raw
 
     - name: Extract OS version ID
